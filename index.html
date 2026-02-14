@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sorteo de Instagram</title>
+  <meta name="description" content="Realizá sorteos transparentes con los comentarios de tus posteos de Instagram. Animación en vivo, grabación y link compartible.">
+  <meta property="og:title" content="Sorteo de Instagram">
+  <meta property="og:description" content="Sorteo transparente con comentarios de Instagram">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ig-pink: #E1306C;
+      --ig-purple: #833AB4;
+      --ig-orange: #F77737;
+      --ig-yellow: #FCAF45;
+      --bg: #0a0a0a;
+      --surface: #1a1a1a;
+      --surface-2: #252525;
+      --surface-3: #333;
+      --text: #fafafa;
+      --text-secondary: #a0a0a0;
+      --border: #333;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --gradient: linear-gradient(135deg, var(--ig-yellow), var(--ig-orange), var(--ig-pink), var(--ig-purple));
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Background effect */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at 30% 20%, rgba(131, 58, 180, 0.08) 0%, transparent 50%),
+                  radial-gradient(ellipse at 70% 80%, rgba(225, 48, 108, 0.06) 0%, transparent 50%);
+      z-index: -1;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 40px 0 30px;
+    }
+
+    .logo {
+      width: 56px;
+      height: 56px;
+      background: var(--gradient);
+      border-radius: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      font-size: 28px;
+      box-shadow: 0 8px 32px rgba(225, 48, 108, 0.3);
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 800;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+
+    .header p {
+      color: var(--text-secondary);
+      font-size: 15px;
+    }
+
+    /* Steps indicator */
+    .steps-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 32px;
+      padding: 0 20px;
+    }
+
+    .step-dot {
+      flex: 1;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--surface-2);
+      transition: background 0.4s ease;
+    }
+
+    .step-dot.active {
+      background: var(--gradient);
+    }
+
+    .step-dot.completed {
+      background: var(--ig-pink);
+    }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+
+    /* Inputs */
+    .input-group {
+      margin-bottom: 16px;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    input[type="text"],
+    input[type="url"],
+    input[type="number"],
+    textarea {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, textarea:focus {
+      border-color: var(--ig-pink);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 160px;
+      line-height: 1.6;
+    }
+
+    ::placeholder {
+      color: #555;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--gradient);
+      color: white;
+      width: 100%;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(225, 48, 108, 0.3);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-secondary {
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--surface-3);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--ig-pink);
+      border: 1px solid var(--ig-pink);
+    }
+
+    .btn-outline:hover {
+      background: rgba(225, 48, 108, 0.1);
+    }
+
+    .btn-sm {
+      padding: 10px 18px;
+      font-size: 13px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .btn-group .btn {
+      flex: 1;
+    }
+
+    /* Tab buttons */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--surface-2);
+      border-radius: var(--radius-sm);
+      padding: 4px;
+      margin-bottom: 20px;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 10px 16px;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab.active {
+      background: var(--surface-3);
+      color: var(--text);
+    }
+
+    /* Participant list */
+    .participant-list {
+      max-height: 320px;
+      overflow-y: auto;
+      margin-bottom: 16px;
+      border-radius: var(--radius-sm);
+    }
+
+    .participant-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .participant-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .participant-list::-webkit-scrollbar-thumb {
+      background: var(--surface-3);
+      border-radius: 3px;
+    }
+
+    .participant-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      transition: background 0.15s;
+    }
+
+    .participant-item:hover {
+      background: var(--surface-2);
+    }
+
+    .participant-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .participant-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .participant-comment {
+      font-size: 12px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 400px;
+    }
+
+    .participant-number {
+      margin-left: auto;
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .stats-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat-box {
+      flex: 1;
+      background: var(--surface-2);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      text-align: center;
+    }
+
+    .stat-box .number {
+      font-size: 24px;
+      font-weight: 800;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-box .label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    /* Giveaway animation */
+    .giveaway-container {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .slot-machine {
+      position: relative;
+      height: 280px;
+      overflow: hidden;
+      border-radius: var(--radius);
+      background: var(--surface-2);
+      margin-bottom: 24px;
+      border: 2px solid var(--border);
+    }
+
+    .slot-machine::before,
+    .slot-machine::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 80px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .slot-machine::before {
+      top: 0;
+      background: linear-gradient(to bottom, var(--surface-2), transparent);
+    }
+
+    .slot-machine::after {
+      bottom: 0;
+      background: linear-gradient(to top, var(--surface-2), transparent);
+    }
+
+    .slot-highlight {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: calc(100% - 24px);
+      height: 56px;
+      border: 2px solid var(--ig-pink);
+      border-radius: 12px;
+      z-index: 3;
+      box-shadow: 0 0 20px rgba(225, 48, 108, 0.3), inset 0 0 20px rgba(225, 48, 108, 0.05);
+    }
+
+    .slot-reel {
+      position: absolute;
+      left: 0;
+      right: 0;
+      transition: none;
+    }
+
+    .slot-item {
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 700;
+      padding: 0 40px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .slot-item .at-sign {
+      color: var(--ig-pink);
+      margin-right: 2px;
+    }
+
+    /* Winner */
+    .winner-section {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .winner-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      background: rgba(225, 48, 108, 0.15);
+      color: var(--ig-pink);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    .winner-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      font-weight: 800;
+      margin: 0 auto 16px;
+      box-shadow: 0 8px 40px rgba(225, 48, 108, 0.4);
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 8px 40px rgba(225, 48, 108, 0.4); }
+      50% { box-shadow: 0 8px 60px rgba(225, 48, 108, 0.6); }
+    }
+
+    .winner-name {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .winner-name .at-sign {
+      color: var(--ig-pink);
+    }
+
+    .winner-details {
+      color: var(--text-secondary);
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+
+    /* Confetti canvas */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* Options / Filters */
+    .option-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .option-row:last-child {
+      border-bottom: none;
+    }
+
+    .option-label {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .option-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* Toggle switch */
+    .toggle {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      background: var(--surface-3);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+
+    .toggle.active {
+      background: var(--ig-pink);
+    }
+
+    .toggle::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+
+    .toggle.active::after {
+      transform: translateX(20px);
+    }
+
+    /* Section visibility */
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Info box */
+    .info-box {
+      background: rgba(131, 58, 180, 0.1);
+      border: 1px solid rgba(131, 58, 180, 0.2);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .info-box strong {
+      color: var(--text);
+    }
+
+    /* Recording indicator */
+    .recording-indicator {
+      display: none;
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      padding: 8px 16px;
+      background: rgba(220, 38, 38, 0.9);
+      color: white;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 50;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .recording-indicator.active {
+      display: flex;
+    }
+
+    .rec-dot {
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* History panel */
+    .history-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      background: var(--surface-2);
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+    }
+
+    .history-item .trophy {
+      font-size: 20px;
+    }
+
+    .history-item .details {
+      flex: 1;
+    }
+
+    .history-item .name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .history-item .date {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .container {
+        padding: 12px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .header h1 {
+        font-size: 24px;
+      }
+
+      .winner-name {
+        font-size: 26px;
+      }
+
+      .slot-item {
+        font-size: 17px;
+      }
+
+      .btn-group {
+        flex-direction: column;
+      }
+    }
+
+    /* Exclude input */
+    .exclude-input {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .exclude-input input {
+      flex: 1;
+    }
+
+    .exclude-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .exclude-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      background: rgba(225, 48, 108, 0.15);
+      color: var(--ig-pink);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .exclude-tag button {
+      background: none;
+      border: none;
+      color: var(--ig-pink);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 0;
+      margin-left: 2px;
+    }
+
+    /* Number input */
+    .number-input {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .number-input input {
+      width: 80px;
+      text-align: center;
+    }
+
+    /* Post preview */
+    .post-preview {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px;
+      background: var(--surface-2);
+      border-radius: var(--radius-sm);
+      margin-bottom: 16px;
+    }
+
+    .post-preview-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--gradient);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .post-preview-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .post-preview-url {
+      font-size: 13px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .post-preview-label {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 20px 0;
+      margin-top: auto;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .footer a {
+      color: var(--ig-pink);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<div class="recording-indicator" id="recIndicator">
+  <span class="rec-dot"></span>
+  <span>Grabando</span>
+</div>
+
+<div class="container">
+  <div class="header">
+    <div class="logo">&#127881;</div>
+    <h1>Sorteo de Instagram</h1>
+    <p>Sorteos transparentes con los comentarios de tus posteos</p>
+  </div>
+
+  <div class="steps-bar">
+    <div class="step-dot active" data-step="0"></div>
+    <div class="step-dot" data-step="1"></div>
+    <div class="step-dot" data-step="2"></div>
+    <div class="step-dot" data-step="3"></div>
+  </div>
+
+  <!-- STEP 0: Input post URL and load comments -->
+  <div class="section active" id="step-0">
+    <div class="card">
+      <div class="card-title">Cargar comentarios</div>
+      <div class="card-subtitle">Elegí cómo querés cargar los participantes del sorteo</div>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="manual">Pegar comentarios</button>
+        <button class="tab" data-tab="api">Con API de Instagram</button>
+      </div>
+
+      <div id="tab-manual">
+        <div class="input-group">
+          <label>Link del posteo de Instagram (opcional)</label>
+          <input type="url" id="postUrl" placeholder="https://www.instagram.com/p/XXXXXXX/">
+        </div>
+
+        <div class="info-box">
+          <strong>Cómo obtener los comentarios:</strong><br>
+          1. Abrí el posteo en Instagram (web o app)<br>
+          2. Seleccioná y copiá todos los comentarios<br>
+          3. Pegalos abajo. El sistema detecta los @usuarios automáticamente
+        </div>
+
+        <div class="input-group">
+          <label>Pegar comentarios (uno por línea o texto copiado de Instagram)</label>
+          <textarea id="commentsInput" placeholder="@usuario1 me encanta este sorteo!&#10;@usuario2 participando!&#10;@usuario3 quiero ganar&#10;&#10;O simplemente una lista de usuarios:&#10;usuario1&#10;usuario2&#10;usuario3"></textarea>
+        </div>
+      </div>
+
+      <div id="tab-api" style="display:none;">
+        <div class="info-box">
+          <strong>Instagram Graph API</strong><br>
+          Necesitás un Access Token de la Graph API de Instagram/Facebook para cargar comentarios automáticamente desde un posteo.
+          <br><br>
+          Podés obtener uno en <strong>developers.facebook.com</strong> creando una app con permisos de Instagram.
+        </div>
+
+        <div class="input-group">
+          <label>Link del posteo de Instagram</label>
+          <input type="url" id="postUrlApi" placeholder="https://www.instagram.com/p/XXXXXXX/">
+        </div>
+
+        <div class="input-group">
+          <label>Access Token de Instagram Graph API</label>
+          <input type="text" id="apiToken" placeholder="Tu access token...">
+        </div>
+
+        <div class="input-group">
+          <label>Media ID del posteo</label>
+          <input type="text" id="mediaId" placeholder="El media ID del posteo (numérico)">
+        </div>
+        <p style="font-size:12px; color:var(--text-secondary); margin-bottom: 16px;">
+          Podés obtener el Media ID usando el endpoint <code>/ig_hashtag_search</code> o desde tu dashboard de Facebook.
+        </p>
+      </div>
+
+      <button class="btn btn-primary" id="btnLoadComments">Cargar participantes</button>
+    </div>
+  </div>
+
+  <!-- STEP 1: Review participants -->
+  <div class="section" id="step-1">
+    <div class="card">
+      <div class="card-title">Participantes</div>
+      <div class="card-subtitle">Revisá la lista antes de hacer el sorteo</div>
+
+      <div id="postPreview" class="post-preview" style="display:none;">
+        <div class="post-preview-icon">&#128247;</div>
+        <div class="post-preview-info">
+          <div class="post-preview-label">Posteo de Instagram</div>
+          <div class="post-preview-url" id="previewUrl"></div>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="number" id="totalComments">0</div>
+          <div class="label">Comentarios</div>
+        </div>
+        <div class="stat-box">
+          <div class="number" id="uniqueUsers">0</div>
+          <div class="label">Usuarios únicos</div>
+        </div>
+        <div class="stat-box">
+          <div class="number" id="finalParticipants">0</div>
+          <div class="label">Participantes</div>
+        </div>
+      </div>
+
+      <!-- Options -->
+      <div class="option-row">
+        <div>
+          <div class="option-label">Un participante por usuario</div>
+          <div class="option-desc">Cada usuario participa una sola vez</div>
+        </div>
+        <div class="toggle active" id="toggleUnique" data-active="true"></div>
+      </div>
+
+      <div class="option-row">
+        <div>
+          <div class="option-label">Excluir cuentas</div>
+          <div class="option-desc">Excluir organizadores u otras cuentas</div>
+        </div>
+        <div></div>
+      </div>
+      <div class="exclude-input">
+        <input type="text" id="excludeInput" placeholder="@usuario a excluir">
+        <button class="btn btn-secondary btn-sm" id="btnAddExclude">Agregar</button>
+      </div>
+      <div class="exclude-tags" id="excludeTags"></div>
+
+      <div class="option-row" style="margin-top: 12px;">
+        <div>
+          <div class="option-label">Cantidad de ganadores</div>
+          <div class="option-desc">Cuántos ganadores querés sortear</div>
+        </div>
+        <div class="number-input">
+          <input type="number" id="winnersCount" value="1" min="1" max="50">
+        </div>
+      </div>
+
+      <div style="margin-top:16px;">
+        <div class="card-title" style="font-size:15px; margin-bottom:12px;">Lista de participantes</div>
+        <div class="participant-list" id="participantList"></div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-secondary" id="btnBackToLoad">Volver</button>
+        <button class="btn btn-primary" id="btnStartGiveaway">Iniciar sorteo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: Giveaway animation -->
+  <div class="section" id="step-2">
+    <div class="card">
+      <div class="card-title" style="text-align:center;">Realizando el sorteo...</div>
+      <div class="card-subtitle" style="text-align:center;" id="giveawaySubtitle">Seleccionando un ganador al azar</div>
+
+      <div class="giveaway-container">
+        <div class="slot-machine" id="slotMachine">
+          <div class="slot-highlight"></div>
+          <div class="slot-reel" id="slotReel"></div>
+        </div>
+
+        <button class="btn btn-outline btn-sm" id="btnRecord" style="margin-bottom:12px;">
+          &#128308; Grabar pantalla
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: Winner -->
+  <div class="section" id="step-3">
+    <div class="card">
+      <div class="winner-section" id="winnerSection">
+        <!-- Winners will be rendered here dynamically -->
+      </div>
+
+      <div class="btn-group" style="flex-wrap: wrap;">
+        <button class="btn btn-primary" id="btnShare">Compartir resultado</button>
+        <button class="btn btn-secondary" id="btnCopyLink">Copiar link</button>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-outline" id="btnNewGiveaway">Nuevo sorteo</button>
+        <button class="btn btn-outline" id="btnRedraw">Sortear de nuevo</button>
+      </div>
+    </div>
+
+    <div class="card" id="historyCard" style="display:none;">
+      <div class="card-title" style="font-size:15px;">Historial de sorteos</div>
+      <div class="card-subtitle">Sorteos realizados en esta sesión</div>
+      <div id="historyList"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Sorteo de Instagram &mdash; Sorteos transparentes y compartibles
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ========== STATE ==========
+  const state = {
+    postUrl: '',
+    rawComments: [],
+    participants: [],
+    filteredParticipants: [],
+    excludedUsers: [],
+    uniqueOnly: true,
+    winnersCount: 1,
+    winners: [],
+    history: [],
+    currentStep: 0,
+    mediaRecorder: null,
+    recordedChunks: [],
+    isRecording: false
+  };
+
+  // ========== DOM REFS ==========
+  const $ = id => document.getElementById(id);
+  const sections = [
+    $('step-0'), $('step-1'), $('step-2'), $('step-3')
+  ];
+  const stepDots = document.querySelectorAll('.step-dot');
+
+  // ========== URL PARAMS (shareable link) ==========
+  function loadFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const data = params.get('d');
+    if (data) {
+      try {
+        const decoded = JSON.parse(atob(data));
+        if (decoded.postUrl) $('postUrl').value = decoded.postUrl;
+        if (decoded.participants && decoded.participants.length > 0) {
+          $('commentsInput').value = decoded.participants.map(p => `@${p.username} ${p.comment || ''}`).join('\n');
+          // Auto-load
+          setTimeout(() => {
+            $('btnLoadComments').click();
+          }, 500);
+        }
+        if (decoded.winners) {
+          state.winners = decoded.winners;
+          state.postUrl = decoded.postUrl || '';
+        }
+      } catch(e) {
+        console.error('Failed to decode shared data', e);
+      }
+    }
+
+    // Check for result view
+    const result = params.get('r');
+    if (result) {
+      try {
+        const decoded = JSON.parse(atob(result));
+        showSharedResult(decoded);
+      } catch(e) {
+        console.error('Failed to decode result', e);
+      }
+    }
+  }
+
+  function showSharedResult(data) {
+    goToStep(3);
+    renderWinners(data.winners || [], data.totalParticipants || 0, data.postUrl || '');
+  }
+
+  function generateShareUrl() {
+    const data = {
+      winners: state.winners.map(w => w.username),
+      totalParticipants: state.filteredParticipants.length,
+      postUrl: state.postUrl,
+      date: new Date().toISOString()
+    };
+    const encoded = btoa(JSON.stringify(data));
+    return `${window.location.origin}${window.location.pathname}?r=${encoded}`;
+  }
+
+  function generateFullShareUrl() {
+    const data = {
+      postUrl: state.postUrl,
+      participants: state.filteredParticipants.map(p => ({
+        username: p.username,
+        comment: p.comment
+      }))
+    };
+    const encoded = btoa(JSON.stringify(data));
+    return `${window.location.origin}${window.location.pathname}?d=${encoded}`;
+  }
+
+  // ========== NAVIGATION ==========
+  function goToStep(step) {
+    state.currentStep = step;
+    sections.forEach((s, i) => {
+      s.classList.toggle('active', i === step);
+    });
+    stepDots.forEach((dot, i) => {
+      dot.classList.remove('active', 'completed');
+      if (i === step) dot.classList.add('active');
+      else if (i < step) dot.classList.add('completed');
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ========== TABS ==========
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const tabName = tab.dataset.tab;
+      $('tab-manual').style.display = tabName === 'manual' ? 'block' : 'none';
+      $('tab-api').style.display = tabName === 'api' ? 'block' : 'none';
+    });
+  });
+
+  // ========== TOGGLE ==========
+  $('toggleUnique').addEventListener('click', function() {
+    const isActive = this.dataset.active === 'true';
+    this.dataset.active = !isActive;
+    this.classList.toggle('active', !isActive);
+    state.uniqueOnly = !isActive;
+    applyFilters();
+  });
+
+  // ========== PARSE COMMENTS ==========
+  function parseComments(text) {
+    const lines = text.split('\n').filter(line => line.trim());
+    const comments = [];
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed) continue;
+
+      // Try to extract @username at the start
+      const atMatch = trimmed.match(/^@(\w[\w.]{0,29})\s*(.*)/);
+      if (atMatch) {
+        comments.push({
+          username: atMatch[1].toLowerCase(),
+          comment: atMatch[2].trim()
+        });
+        continue;
+      }
+
+      // Try to find @username anywhere in the line
+      const atAnywhere = trimmed.match(/@(\w[\w.]{0,29})/);
+      if (atAnywhere) {
+        comments.push({
+          username: atAnywhere[1].toLowerCase(),
+          comment: trimmed.replace(/@\w[\w.]{0,29}/, '').trim()
+        });
+        continue;
+      }
+
+      // Treat as plain username
+      const plainUser = trimmed.match(/^(\w[\w.]{0,29})$/);
+      if (plainUser) {
+        comments.push({
+          username: plainUser[1].toLowerCase(),
+          comment: ''
+        });
+        continue;
+      }
+
+      // Fallback: treat first word as username
+      const firstWord = trimmed.split(/\s+/)[0].replace(/^@/, '');
+      if (firstWord && /^\w[\w.]{0,29}$/.test(firstWord)) {
+        comments.push({
+          username: firstWord.toLowerCase(),
+          comment: trimmed.substring(firstWord.length).trim()
+        });
+      }
+    }
+
+    return comments;
+  }
+
+  // ========== LOAD COMMENTS BUTTON ==========
+  $('btnLoadComments').addEventListener('click', async () => {
+    const activeTab = document.querySelector('.tab.active').dataset.tab;
+
+    if (activeTab === 'manual') {
+      const text = $('commentsInput').value.trim();
+      if (!text) {
+        alert('Pegá los comentarios o la lista de usuarios para continuar.');
+        return;
+      }
+      state.postUrl = $('postUrl').value.trim();
+      state.rawComments = parseComments(text);
+    } else {
+      // API mode
+      const token = $('apiToken').value.trim();
+      const mediaId = $('mediaId').value.trim();
+      state.postUrl = $('postUrlApi').value.trim();
+
+      if (!token || !mediaId) {
+        alert('Completá el Access Token y el Media ID para continuar.');
+        return;
+      }
+
+      try {
+        $('btnLoadComments').disabled = true;
+        $('btnLoadComments').textContent = 'Cargando...';
+        state.rawComments = await fetchCommentsFromApi(token, mediaId);
+      } catch(e) {
+        alert('Error al cargar comentarios: ' + e.message);
+        return;
+      } finally {
+        $('btnLoadComments').disabled = false;
+        $('btnLoadComments').textContent = 'Cargar participantes';
+      }
+    }
+
+    if (state.rawComments.length === 0) {
+      alert('No se encontraron participantes. Revisá el formato del texto ingresado.');
+      return;
+    }
+
+    state.participants = [...state.rawComments];
+    applyFilters();
+    goToStep(1);
+
+    // Show post preview
+    if (state.postUrl) {
+      $('postPreview').style.display = 'flex';
+      $('previewUrl').textContent = state.postUrl;
+    } else {
+      $('postPreview').style.display = 'none';
+    }
+  });
+
+  // ========== FETCH FROM API ==========
+  async function fetchCommentsFromApi(token, mediaId) {
+    const comments = [];
+    let url = `https://graph.facebook.com/v18.0/${mediaId}/comments?fields=text,username,timestamp&limit=100&access_token=${token}`;
+
+    while (url) {
+      const response = await fetch(url);
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error?.message || 'Error de API');
+      }
+      const data = await response.json();
+
+      for (const comment of (data.data || [])) {
+        comments.push({
+          username: (comment.username || '').toLowerCase(),
+          comment: comment.text || ''
+        });
+      }
+
+      url = data.paging?.next || null;
+    }
+
+    return comments;
+  }
+
+  // ========== FILTERS ==========
+  function applyFilters() {
+    let filtered = [...state.participants];
+
+    // Exclude users
+    if (state.excludedUsers.length > 0) {
+      const excludeSet = new Set(state.excludedUsers.map(u => u.toLowerCase()));
+      filtered = filtered.filter(p => !excludeSet.has(p.username));
+    }
+
+    // Unique only
+    if (state.uniqueOnly) {
+      const seen = new Set();
+      filtered = filtered.filter(p => {
+        if (seen.has(p.username)) return false;
+        seen.add(p.username);
+        return true;
+      });
+    }
+
+    state.filteredParticipants = filtered;
+
+    // Update UI
+    $('totalComments').textContent = state.rawComments.length;
+    $('uniqueUsers').textContent = new Set(state.rawComments.map(p => p.username)).size;
+    $('finalParticipants').textContent = filtered.length;
+
+    renderParticipantList();
+
+    // Update max winners
+    $('winnersCount').max = Math.max(1, filtered.length);
+    if (parseInt($('winnersCount').value) > filtered.length) {
+      $('winnersCount').value = Math.max(1, filtered.length);
+    }
+  }
+
+  function renderParticipantList() {
+    const list = $('participantList');
+    list.innerHTML = '';
+
+    state.filteredParticipants.forEach((p, i) => {
+      const el = document.createElement('div');
+      el.className = 'participant-item';
+      const initial = p.username.charAt(0).toUpperCase();
+      el.innerHTML = `
+        <div class="participant-avatar">${initial}</div>
+        <div>
+          <div class="participant-name">@${escapeHtml(p.username)}</div>
+          ${p.comment ? `<div class="participant-comment">${escapeHtml(p.comment)}</div>` : ''}
+        </div>
+        <div class="participant-number">#${i + 1}</div>
+      `;
+      list.appendChild(el);
+    });
+  }
+
+  // ========== EXCLUDE USERS ==========
+  $('btnAddExclude').addEventListener('click', addExcludedUser);
+  $('excludeInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') addExcludedUser();
+  });
+
+  function addExcludedUser() {
+    let username = $('excludeInput').value.trim().replace(/^@/, '');
+    if (!username) return;
+
+    username = username.toLowerCase();
+    if (state.excludedUsers.includes(username)) return;
+
+    state.excludedUsers.push(username);
+    $('excludeInput').value = '';
+    renderExcludeTags();
+    applyFilters();
+  }
+
+  function renderExcludeTags() {
+    const container = $('excludeTags');
+    container.innerHTML = '';
+    state.excludedUsers.forEach(u => {
+      const tag = document.createElement('span');
+      tag.className = 'exclude-tag';
+      tag.innerHTML = `@${escapeHtml(u)} <button data-user="${escapeHtml(u)}">&times;</button>`;
+      tag.querySelector('button').addEventListener('click', () => {
+        state.excludedUsers = state.excludedUsers.filter(x => x !== u);
+        renderExcludeTags();
+        applyFilters();
+      });
+      container.appendChild(tag);
+    });
+  }
+
+  // ========== START GIVEAWAY ==========
+  $('btnStartGiveaway').addEventListener('click', () => {
+    const count = parseInt($('winnersCount').value) || 1;
+    state.winnersCount = Math.min(count, state.filteredParticipants.length);
+
+    if (state.filteredParticipants.length === 0) {
+      alert('No hay participantes para sortear.');
+      return;
+    }
+
+    if (state.winnersCount > 1) {
+      $('giveawaySubtitle').textContent = `Seleccionando ${state.winnersCount} ganadores al azar`;
+    } else {
+      $('giveawaySubtitle').textContent = 'Seleccionando un ganador al azar';
+    }
+
+    goToStep(2);
+    runGiveaway();
+  });
+
+  // ========== GIVEAWAY ANIMATION ==========
+  function runGiveaway() {
+    // Pick winners using crypto random
+    const winners = [];
+    const pool = [...state.filteredParticipants];
+
+    for (let i = 0; i < state.winnersCount && pool.length > 0; i++) {
+      const randomArray = new Uint32Array(1);
+      crypto.getRandomValues(randomArray);
+      const idx = randomArray[0] % pool.length;
+      winners.push(pool.splice(idx, 1)[0]);
+    }
+
+    state.winners = winners;
+
+    // Animate slot machine for first winner (or single winner)
+    animateSlotMachine(winners[0], () => {
+      // Save to history
+      const entry = {
+        winners: winners.map(w => w.username),
+        postUrl: state.postUrl,
+        date: new Date().toISOString(),
+        totalParticipants: state.filteredParticipants.length
+      };
+      state.history.push(entry);
+
+      // Show winner
+      goToStep(3);
+      renderWinners(winners.map(w => w.username), state.filteredParticipants.length, state.postUrl);
+      launchConfetti();
+    });
+  }
+
+  function animateSlotMachine(winner, onComplete) {
+    const reel = $('slotReel');
+    const machine = $('slotMachine');
+    const machineHeight = machine.offsetHeight;
+    const itemHeight = 56;
+    const centerOffset = (machineHeight / 2) - (itemHeight / 2);
+
+    // Build reel items: random names, then winner at the end
+    const allNames = state.filteredParticipants.map(p => p.username);
+    const reelItems = [];
+    const totalItems = 60; // enough for a good spin
+
+    for (let i = 0; i < totalItems - 1; i++) {
+      const randomArray = new Uint32Array(1);
+      crypto.getRandomValues(randomArray);
+      reelItems.push(allNames[randomArray[0] % allNames.length]);
+    }
+    reelItems.push(winner.username); // Last item is the winner
+
+    reel.innerHTML = reelItems.map(name =>
+      `<div class="slot-item"><span class="at-sign">@</span>${escapeHtml(name)}</div>`
+    ).join('');
+
+    // Calculate final position
+    const finalPos = -((totalItems - 1) * itemHeight - centerOffset);
+
+    // Start animation
+    reel.style.transition = 'none';
+    reel.style.top = centerOffset + 'px';
+
+    // Force reflow
+    reel.offsetHeight;
+
+    // Animate with CSS transition (ease-out for deceleration)
+    const duration = 4000 + Math.random() * 1000;
+    reel.style.transition = `top ${duration}ms cubic-bezier(0.15, 0.85, 0.35, 1)`;
+    reel.style.top = finalPos + 'px';
+
+    setTimeout(() => {
+      onComplete();
+    }, duration + 300);
+  }
+
+  // ========== RENDER WINNERS ==========
+  function renderWinners(winnerNames, totalParticipants, postUrl) {
+    const section = $('winnerSection');
+
+    if (winnerNames.length === 1) {
+      const name = winnerNames[0];
+      const initial = name.charAt(0).toUpperCase();
+      section.innerHTML = `
+        <div class="winner-badge">Ganador/a del sorteo</div>
+        <div class="winner-avatar">${initial}</div>
+        <div class="winner-name"><span class="at-sign">@</span>${escapeHtml(name)}</div>
+        <div class="winner-details">
+          Seleccionado al azar entre ${totalParticipants} participantes
+          ${postUrl ? '<br>Posteo: ' + escapeHtml(postUrl) : ''}
+          <br>${new Date().toLocaleDateString('es-AR', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+        </div>
+      `;
+    } else {
+      let html = `<div class="winner-badge">${winnerNames.length} Ganadores del sorteo</div>`;
+      winnerNames.forEach((name, i) => {
+        const initial = name.charAt(0).toUpperCase();
+        html += `
+          <div style="display:flex; align-items:center; gap:14px; padding:12px; background:var(--surface-2); border-radius:12px; margin-bottom:8px; text-align:left;">
+            <div class="participant-avatar" style="width:44px;height:44px;font-size:18px;">${initial}</div>
+            <div>
+              <div style="font-weight:700; font-size:16px;"><span style="color:var(--ig-pink);">@</span>${escapeHtml(name)}</div>
+              <div style="font-size:12px; color:var(--text-secondary);">Ganador #${i + 1}</div>
+            </div>
+          </div>
+        `;
+      });
+      html += `
+        <div class="winner-details" style="margin-top:16px;">
+          Seleccionados al azar entre ${totalParticipants} participantes
+          ${postUrl ? '<br>Posteo: ' + escapeHtml(postUrl) : ''}
+          <br>${new Date().toLocaleDateString('es-AR', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+        </div>
+      `;
+      section.innerHTML = html;
+    }
+
+    // History
+    renderHistory();
+  }
+
+  function renderHistory() {
+    if (state.history.length <= 1) {
+      $('historyCard').style.display = 'none';
+      return;
+    }
+    $('historyCard').style.display = 'block';
+    const list = $('historyList');
+    list.innerHTML = '';
+    state.history.slice().reverse().forEach((entry, i) => {
+      const div = document.createElement('div');
+      div.className = 'history-item';
+      div.innerHTML = `
+        <div class="trophy">&#127942;</div>
+        <div class="details">
+          <div class="name">${entry.winners.map(w => '@' + escapeHtml(w)).join(', ')}</div>
+          <div class="date">De ${entry.totalParticipants} participantes &mdash; ${new Date(entry.date).toLocaleTimeString('es-AR')}</div>
+        </div>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  // ========== CONFETTI ==========
+  function launchConfetti() {
+    const canvas = $('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const confettiPieces = [];
+    const colors = ['#E1306C', '#833AB4', '#F77737', '#FCAF45', '#405DE6', '#5B51D8', '#C13584', '#FD1D1D'];
+
+    for (let i = 0; i < 150; i++) {
+      confettiPieces.push({
+        x: Math.random() * canvas.width,
+        y: -Math.random() * canvas.height,
+        w: Math.random() * 10 + 5,
+        h: Math.random() * 6 + 3,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        rotation: Math.random() * 360,
+        rotationSpeed: (Math.random() - 0.5) * 10,
+        speedY: Math.random() * 3 + 2,
+        speedX: (Math.random() - 0.5) * 4,
+        opacity: 1
+      });
+    }
+
+    let frame = 0;
+    const maxFrames = 180;
+
+    function animate() {
+      frame++;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      confettiPieces.forEach(p => {
+        p.y += p.speedY;
+        p.x += p.speedX;
+        p.rotation += p.rotationSpeed;
+
+        if (frame > maxFrames - 40) {
+          p.opacity -= 0.025;
+        }
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.globalAlpha = Math.max(0, p.opacity);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      });
+
+      if (frame < maxFrames) {
+        requestAnimationFrame(animate);
+      } else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    animate();
+  }
+
+  // ========== SCREEN RECORDING ==========
+  $('btnRecord').addEventListener('click', async () => {
+    if (state.isRecording) {
+      stopRecording();
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: { cursor: 'always' },
+        audio: false
+      });
+
+      state.mediaRecorder = new MediaRecorder(stream, {
+        mimeType: getSupportedMimeType()
+      });
+      state.recordedChunks = [];
+
+      state.mediaRecorder.ondataavailable = e => {
+        if (e.data.size > 0) state.recordedChunks.push(e.data);
+      };
+
+      state.mediaRecorder.onstop = () => {
+        const blob = new Blob(state.recordedChunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `sorteo-instagram-${Date.now()}.webm`;
+        a.click();
+        URL.revokeObjectURL(url);
+        state.isRecording = false;
+        $('recIndicator').classList.remove('active');
+        $('btnRecord').innerHTML = '&#128308; Grabar pantalla';
+        stream.getTracks().forEach(t => t.stop());
+      };
+
+      state.mediaRecorder.start();
+      state.isRecording = true;
+      $('recIndicator').classList.add('active');
+      $('btnRecord').innerHTML = '&#9724; Detener grabación';
+    } catch(e) {
+      console.log('Recording cancelled or not supported');
+    }
+  });
+
+  function stopRecording() {
+    if (state.mediaRecorder && state.mediaRecorder.state !== 'inactive') {
+      state.mediaRecorder.stop();
+    }
+  }
+
+  function getSupportedMimeType() {
+    const types = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm', 'video/mp4'];
+    for (const type of types) {
+      if (MediaRecorder.isTypeSupported(type)) return type;
+    }
+    return 'video/webm';
+  }
+
+  // ========== SHARE ==========
+  $('btnShare').addEventListener('click', async () => {
+    const shareUrl = generateShareUrl();
+    const shareText = state.winners.length === 1
+      ? `El ganador del sorteo es @${state.winners[0].username}! Sorteado entre ${state.filteredParticipants.length} participantes.`
+      : `Los ganadores del sorteo son: ${state.winners.map(w => '@' + w.username).join(', ')}! Sorteados entre ${state.filteredParticipants.length} participantes.`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Resultado del Sorteo de Instagram',
+          text: shareText,
+          url: shareUrl
+        });
+      } catch(e) {
+        // User cancelled or error
+        fallbackCopy(shareUrl, shareText);
+      }
+    } else {
+      fallbackCopy(shareUrl, shareText);
+    }
+  });
+
+  $('btnCopyLink').addEventListener('click', () => {
+    const shareUrl = generateShareUrl();
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      $('btnCopyLink').textContent = 'Link copiado!';
+      setTimeout(() => {
+        $('btnCopyLink').textContent = 'Copiar link';
+      }, 2000);
+    }).catch(() => {
+      // Fallback
+      prompt('Copiá este link:', shareUrl);
+    });
+  });
+
+  function fallbackCopy(url, text) {
+    navigator.clipboard.writeText(text + '\n' + url).then(() => {
+      alert('Resultado copiado al portapapeles!');
+    }).catch(() => {
+      prompt('Copiá este texto:', text + '\n' + url);
+    });
+  }
+
+  // ========== NAVIGATION BUTTONS ==========
+  $('btnBackToLoad').addEventListener('click', () => goToStep(0));
+
+  $('btnNewGiveaway').addEventListener('click', () => {
+    // Stop recording if active
+    if (state.isRecording) stopRecording();
+    goToStep(0);
+  });
+
+  $('btnRedraw').addEventListener('click', () => {
+    if (state.isRecording) stopRecording();
+    goToStep(2);
+    runGiveaway();
+  });
+
+  // ========== UTILS ==========
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+  }
+
+  // ========== INIT ==========
+  loadFromUrl();
+
+})();
+</script>
+</body>
+</html>
